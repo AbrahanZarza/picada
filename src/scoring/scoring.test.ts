@@ -43,6 +43,7 @@ function makeHour(hour: number, overrides: Partial<HourConditions> = {}): HourCo
       wavePeriod: 8,
       swellHeight: 0.9,
       swellPeriod: 9,
+      sst: 21,
     },
     ...overrides,
   }
@@ -64,6 +65,7 @@ const stormDay = Array.from({ length: 24 }, (_, i) =>
       wavePeriod: 7,
       swellHeight: 3.0,
       swellPeriod: 7,
+      sst: 21,
     },
   }),
 )

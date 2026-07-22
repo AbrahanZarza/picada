@@ -6,11 +6,15 @@ import {
   isStormy,
   moonFactor,
   pressureFactor,
+  seasonFactor,
   sentimentOf,
+  speciesWavesFactor,
+  sstFactor,
   tideFactor,
   wavesFactor,
   windFactor,
 } from './factors'
+import type { Species } from '../species/catalog'
 import type {
   DayAstro,
   DayScore,
@@ -24,21 +28,34 @@ import type {
 
 const STORM_MULTIPLIER = 0.6
 
-/** Score 0-100 de una hora concreta. */
-export function scoreHour(h: HourConditions, astro: DayAstro, mode: Mode): number {
+/** Score 0-100 de una hora concreta (con recálculo por especie si se indica). */
+export function scoreHour(
+  h: HourConditions,
+  astro: DayAstro,
+  mode: Mode,
+  species?: Species | null,
+): number {
   const weights = MODE_WEIGHTS[mode]
   const subs: Array<{ key: FactorKey; score: number }> = [
     { key: 'wind', score: windFactor(effectiveWind(h.windSpeed, h.windGusts), mode).score },
     { key: 'pressure', score: pressureFactor(h.pressureMsl, h.pressureTrend).score },
     { key: 'tide', score: tideFactor(astro.tideCoefficient, mode).score },
     { key: 'moon', score: moonFactor(astro.moonPhase, astro.moonPhaseName).score },
-    { key: 'daytime', score: daytimeScore(h.time, astro) },
+    { key: 'daytime', score: daytimeScore(h.time, astro, species?.nocturnal) },
   ]
   if (h.marine) {
     subs.push({
       key: 'waves',
-      score: wavesFactor(h.marine.waveHeight, h.marine.swellPeriod, mode).score,
+      score: species
+        ? speciesWavesFactor(h.marine.waveHeight, species, species.id).score
+        : wavesFactor(h.marine.waveHeight, h.marine.swellPeriod, mode).score,
     })
+    if (species && h.marine.sst != null) {
+      subs.push({ key: 'sst', score: sstFactor(h.marine.sst, species, species.id).score })
+    }
+  }
+  if (species) {
+    subs.push({ key: 'season', score: seasonFactor(h.time.getUTCMonth(), species, species.id).score })
   }
   // Normalizar por Σw: si falta el mar, su peso se reparte pro-rata
   let sum = 0
@@ -84,10 +101,15 @@ function bestWindows(hourScores: HourScore[], threshold: number): Interval[] {
 }
 
 /** Score del día + ventanas óptimas + los "porqués" que más mueven la aguja. */
-export function scoreDay(hours: HourConditions[], astro: DayAstro, mode: Mode): DayScore {
+export function scoreDay(
+  hours: HourConditions[],
+  astro: DayAstro,
+  mode: Mode,
+  species?: Species | null,
+): DayScore {
   const hourScores: HourScore[] = hours.map((h) => ({
     time: h.time,
-    score: scoreHour(h, astro, mode),
+    score: scoreHour(h, astro, mode, species),
   }))
 
   // Un día es bueno si tiene ventanas buenas: media del top 25% de las horas
@@ -104,10 +126,20 @@ export function scoreDay(hours: HourConditions[], astro: DayAstro, mode: Mode): 
 
   const windows = bestWindows(hourScores, Math.max(60, score - 5))
 
-  return { score, hourScores, bestWindows: windows, topReasons: topReasons(hours, astro, mode) }
+  return {
+    score,
+    hourScores,
+    bestWindows: windows,
+    topReasons: topReasons(hours, astro, mode, species),
+  }
 }
 
-function topReasons(hours: HourConditions[], astro: DayAstro, mode: Mode): FactorResult[] {
+function topReasons(
+  hours: HourConditions[],
+  astro: DayAstro,
+  mode: Mode,
+  species?: Species | null,
+): FactorResult[] {
   const weights = MODE_WEIGHTS[mode]
   const daylight = hours.filter(
     (h) => h.time >= astro.sunrise && h.time <= astro.sunset,
@@ -119,7 +151,10 @@ function topReasons(hours: HourConditions[], astro: DayAstro, mode: Mode): Facto
   const pressure = pressureFactor(midday.pressureMsl, mean(sample.map((h) => h.pressureTrend)))
   const tide = tideFactor(astro.tideCoefficient, mode)
   const moon = moonFactor(astro.moonPhase, astro.moonPhaseName)
-  const daytime = { score: mean(sample.map((h) => daytimeScore(h.time, astro))), reason: daytimeReason(astro) }
+  const daytime = {
+    score: mean(sample.map((h) => daytimeScore(h.time, astro, species?.nocturnal))),
+    reason: daytimeReason(astro),
+  }
 
   const factors: FactorResult[] = [
     { key: 'wind', weight: weights.wind, ...wind, sentiment: sentimentOf(wind.score) },
@@ -131,15 +166,32 @@ function topReasons(hours: HourConditions[], astro: DayAstro, mode: Mode): Facto
 
   const marineHours = sample.filter((h) => h.marine != null)
   if (marineHours.length > 0) {
-    const waves = wavesFactor(
-      mean(marineHours.map((h) => h.marine!.waveHeight)),
-      mean(marineHours.map((h) => h.marine!.swellPeriod)),
-      mode,
-    )
+    const meanHeight = mean(marineHours.map((h) => h.marine!.waveHeight))
+    const waves = species
+      ? speciesWavesFactor(meanHeight, species, species.id)
+      : wavesFactor(meanHeight, mean(marineHours.map((h) => h.marine!.swellPeriod)), mode)
     factors.push({ key: 'waves', weight: weights.waves, ...waves, sentiment: sentimentOf(waves.score) })
+
+    const sstHours = marineHours.filter((h) => h.marine!.sst != null)
+    if (species && sstHours.length > 0) {
+      const sst = sstFactor(mean(sstHours.map((h) => h.marine!.sst!)), species, species.id)
+      factors.push({ key: 'sst', weight: weights.sst, ...sst, sentiment: sentimentOf(sst.score) })
+    }
+  }
+  if (species) {
+    const season = seasonFactor(sample[0].time.getUTCMonth(), species, species.id)
+    factors.push({ key: 'season', weight: weights.season, ...season, sentiment: sentimentOf(season.score) })
   }
 
-  return factors
-    .sort((a, b) => b.weight * Math.abs(b.score - 0.5) - a.weight * Math.abs(a.score - 0.5))
-    .slice(0, 3)
+  const ranked = factors.sort(
+    (a, b) => b.weight * Math.abs(b.score - 0.5) - a.weight * Math.abs(a.score - 0.5),
+  )
+  const top = ranked.slice(0, 3)
+
+  // con especie seleccionada, su factor más determinante siempre debe verse
+  if (species && !top.some((f) => f.reason.key.startsWith('reason.species.'))) {
+    const bestSpecies = ranked.find((f) => f.reason.key.startsWith('reason.species.'))
+    if (bestSpecies) top[top.length - 1] = bestSpecies
+  }
+  return top
 }

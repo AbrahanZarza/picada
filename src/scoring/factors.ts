@@ -1,6 +1,7 @@
 import { clamp, piecewise } from '../lib/geo'
 import { goldenWindows, solarNoon } from '../astro/sun'
 import { inAnyInterval } from '../astro/solunar'
+import type { Species } from '../species/catalog'
 import type { DayAstro, Mode, ReasonRef } from '../types'
 
 export interface FactorEval {
@@ -165,16 +166,62 @@ export function moonFactor(phase: number, phaseName: string): FactorEval {
 }
 
 /** Factor horario: horas doradas, períodos solunares y bajón del mediodía. */
-export function daytimeScore(t: Date, astro: DayAstro): number {
+export function daytimeScore(t: Date, astro: DayAstro, nocturnal = false): number {
   const golden = goldenWindows(astro.sunrise, astro.sunset)
   const noon = solarNoon(astro.sunrise, astro.sunset)
   const isGolden = inAnyInterval(t, golden)
   const isMidday = Math.abs(t.getTime() - noon.getTime()) < 1.5 * 3600 * 1000
+  const isNight = t < astro.sunrise || t > astro.sunset
 
   let score = isGolden ? 1.0 : isMidday ? 0.35 : 0.5
+  if (nocturnal && isNight) score = Math.max(score, 0.85)
   if (inAnyInterval(t, astro.solunarMajors)) score += 0.3
   else if (inAnyInterval(t, astro.solunarMinors)) score += 0.15
   return clamp(0, 1, score)
+}
+
+/* ---------- factores por especie ---------- */
+
+/** Estado del mar según la curva de la especie (calmado vs movido). */
+export function speciesWavesFactor(waveHeight: number, species: Species, name: string): FactorEval {
+  const score = piecewise(species.waveCurve, waveHeight)
+  const key =
+    score >= 0.7
+      ? 'reason.species.seaGood'
+      : score <= 0.4
+        ? 'reason.species.seaBad'
+        : 'reason.species.seaMid'
+  return { score, reason: { key, params: { name, height: waveHeight.toFixed(1) } } }
+}
+
+/** Temperatura del agua vs rango de la especie (trapecio). */
+export function sstFactor(sst: number, species: Species, name: string): FactorEval {
+  const [min, optMin, optMax, max] = species.sst
+  const score = piecewise(
+    [
+      [min - 3, 0.05],
+      [min, 0.2],
+      [optMin, 1],
+      [optMax, 1],
+      [max, 0.2],
+      [max + 3, 0.05],
+    ],
+    sst,
+  )
+  const key = score >= 0.7 ? 'reason.species.sstGood' : score <= 0.35 ? 'reason.species.sstBad' : 'reason.species.sstMid'
+  return { score, reason: { key, params: { name, sst: Math.round(sst) } } }
+}
+
+/** Época del año según el calendario de actividad de la especie. */
+export function seasonFactor(monthIdx: number, species: Species, name: string): FactorEval {
+  const score = species.months[monthIdx] ?? 0.5
+  const key =
+    score >= 0.8
+      ? 'reason.species.seasonGood'
+      : score <= 0.45
+        ? 'reason.species.seasonBad'
+        : 'reason.species.seasonMid'
+  return { score, reason: { key, params: { name } } }
 }
 
 export function daytimeReason(astro: DayAstro): ReasonRef {

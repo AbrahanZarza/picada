@@ -1,7 +1,7 @@
 import { scoreBand } from '../../config'
 import { formatHour } from '../../lib/format'
 import { useLang, useT } from '../../i18n'
-import type { FishingDay, Mode } from '../../types'
+import type { DayScore, FishingDay, Mode } from '../../types'
 
 const W = 360
 const H = 130
@@ -12,13 +12,16 @@ const TOP = 8
 interface Props {
   day: FishingDay
   mode: Mode
+  /** score recalculado (p.ej. por especie) que sustituye al del modo */
+  scoreOverride?: DayScore | null
   timezone: string
 }
 
-export function HourlyChart({ day, mode, timezone }: Props) {
+export function HourlyChart({ day, mode, scoreOverride, timezone }: Props) {
   const t = useT()
   const { lang } = useLang()
-  const { hourScores } = day.scores[mode]
+  const dayScore = scoreOverride ?? day.scores[mode]
+  const { hourScores } = dayScore
   if (hourScores.length === 0) return null
 
   const dayMs = day.end.getTime() - day.start.getTime()
@@ -32,7 +35,7 @@ export function HourlyChart({ day, mode, timezone }: Props) {
 
   const meanScore =
     hourScores.reduce((acc, h) => acc + h.score, 0) / hourScores.length
-  const color = scoreBand(day.scores[mode].score).color
+  const color = scoreBand(dayScore.score).color
 
   const clampX = (v: number) => Math.min(W - PAD_X, Math.max(PAD_X, v))
 

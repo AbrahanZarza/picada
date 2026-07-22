@@ -6,18 +6,20 @@ import type { FishingDay, Mode } from '../../types'
 interface Props {
   days: FishingDay[]
   mode: Mode
+  /** scores recalculados (p.ej. por especie) que sustituyen a los del modo */
+  scoresOverride?: { score: number }[] | null
   selected: number
   timezone: string
   onSelect: (idx: number) => void
 }
 
-export function DaySelector({ days, mode, selected, timezone, onSelect }: Props) {
+export function DaySelector({ days, mode, scoresOverride, selected, timezone, onSelect }: Props) {
   const t = useT()
   const { lang } = useLang()
   return (
     <div className="day-selector" role="tablist">
       {days.map((day, i) => {
-        const score = day.scores[mode].score
+        const score = scoresOverride?.[i]?.score ?? day.scores[mode].score
         return (
           <button
             key={day.date}

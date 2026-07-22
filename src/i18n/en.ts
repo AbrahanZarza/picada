@@ -104,8 +104,31 @@ export const en: Record<keyof typeof es, string> = {
 
   'day.today': 'Today',
 
+  'species.title': 'What species are you after?',
+  'species.any': 'Any',
+  'species.noCatalog': 'No species catalogue for this area yet.',
+  'species.bottom': 'Bottom',
+  'species.bottom.sand': 'sandy beaches',
+  'species.bottom.rock': 'rocky ground',
+  'species.bottom.mixed': 'mixed (sand and rock)',
+  'species.activity': 'Activity',
+  'species.activity.nocturnal': 'dusk and night',
+  'species.activity.diurnal': 'daytime and dusk',
+  'species.bestSeason': 'Best season',
+  'species.allYear': 'all year round',
+
+  'zone.region': 'Area',
+  'zone.marineDistance': 'sea data taken ~{km} km away',
+  'zone.sst': 'Water',
+  'region.mediterranean': 'Mediterranean',
+  'region.atlanticNe': 'Northeast Atlantic',
+  'region.macaronesia': 'Macaronesia (Canaries, Madeira, Azores)',
+
   'settings.title': 'Settings',
   'settings.language': 'Language',
+  'settings.coastRadius': 'Coast search radius',
+  'settings.coastRadiusHelp':
+    'If you mark a spot without sea data (e.g. a town inland), the nearest coast within this distance will be used for marine data.',
   'settings.aboutTitle': 'About the data',
   'settings.aboutBody':
     'High and low tide times are computed automatically from the sea level forecast by the Open-Meteo model. Where that data is not available, they are estimated from astronomy (lunar transit) and marked with "~". The tide coefficient and moon phases are computed with astronomical precision, and weather data comes from Open-Meteo.',
@@ -134,4 +157,14 @@ export const en: Record<keyof typeof es, string> = {
   'reason.time.flat': 'Midday hours: lower activity',
   'reason.storm': 'Thunderstorm risk: be careful',
   'reason.noMarine': 'No sea data: partial rating',
+
+  'reason.species.seaGood': '{name}: sea conditions to its liking ({height} m)',
+  'reason.species.seaMid': '{name}: acceptable sea conditions ({height} m)',
+  'reason.species.seaBad': '{name}: sea conditions not in its favour ({height} m)',
+  'reason.species.sstGood': 'Water at {sst} °C: optimal range for {name}',
+  'reason.species.sstMid': 'Water at {sst} °C: acceptable for {name}',
+  'reason.species.sstBad': 'Water at {sst} °C: outside the range for {name}',
+  'reason.species.seasonGood': 'Good time of year for {name}',
+  'reason.species.seasonMid': 'Average time of year for {name}',
+  'reason.species.seasonBad': 'Slow season for {name}',
 }

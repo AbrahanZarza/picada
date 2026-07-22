@@ -23,6 +23,8 @@ export interface HourlyMarine {
   wavePeriod: number
   swellHeight: number
   swellPeriod: number
+  /** temperatura superficial del agua (°C), si el modelo la ofrece */
+  sst: number | null
 }
 
 export interface HourConditions extends HourlyWeather {
@@ -80,7 +82,16 @@ export interface DayAstro {
   solunarMinors: Interval[]
 }
 
-export type FactorKey = 'wind' | 'waves' | 'pressure' | 'tide' | 'moon' | 'daytime'
+export type FactorKey =
+  | 'wind'
+  | 'waves'
+  | 'pressure'
+  | 'tide'
+  | 'moon'
+  | 'daytime'
+  /* factores adicionales al seleccionar especie */
+  | 'sst'
+  | 'season'
 
 export interface ReasonRef {
   key: string

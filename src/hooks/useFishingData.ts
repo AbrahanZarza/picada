@@ -11,14 +11,24 @@ import { MODES, type DayScore, type FishingDay, type GeoPoint, type HourConditio
 export interface RawFishingData {
   forecast: ForecastResult
   marine: MarineData
+  /** distancia (km) a la costa donde se tomaron los datos de mar; 0 = en el punto */
+  marineDistanceKm: number
 }
 
-async function fetchAll(point: GeoPoint): Promise<RawFishingData> {
-  const [forecast, marine] = await Promise.allSettled([fetchForecast(point), fetchMarine(point)])
+async function fetchAll(point: GeoPoint, coastRadiusKm: number): Promise<RawFishingData> {
+  const [forecast, marine] = await Promise.allSettled([
+    fetchForecast(point),
+    fetchMarine(point, coastRadiusKm),
+  ])
   if (forecast.status === 'rejected') throw forecast.reason
+  const marineResult =
+    marine.status === 'fulfilled'
+      ? marine.value
+      : { data: { waves: null, seaLevel: null }, distanceKm: 0 }
   return {
     forecast: forecast.value,
-    marine: marine.status === 'fulfilled' ? marine.value : { waves: null, seaLevel: null },
+    marine: marineResult.data,
+    marineDistanceKm: marineResult.distanceKm,
   }
 }
 
@@ -65,11 +75,15 @@ export interface FishingDataState {
   timezone: string | null
   days: FishingDay[]
   marine: MarineAvailability
+  marineDistanceKm: number
   retry: () => void
 }
 
-export function useFishingData(point: GeoPoint): FishingDataState {
-  const raw = useAsync(() => fetchAll(point), [point.lat, point.lon])
+export function useFishingData(point: GeoPoint, coastRadiusKm: number): FishingDataState {
+  const raw = useAsync(
+    () => fetchAll(point, coastRadiusKm),
+    [point.lat, point.lon, coastRadiusKm],
+  )
 
   const days = useMemo(
     () => (raw.data ? buildFishingDays(raw.data, point) : []),
@@ -82,6 +96,7 @@ export function useFishingData(point: GeoPoint): FishingDataState {
     timezone: raw.data?.forecast.timezone ?? null,
     days,
     marine: raw.data?.marine.waves ? 'available' : 'unavailable',
+    marineDistanceKm: raw.data?.marineDistanceKm ?? 0,
     retry: raw.retry,
   }
 }

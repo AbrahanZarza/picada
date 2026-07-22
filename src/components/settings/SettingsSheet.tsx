@@ -1,10 +1,12 @@
 import { useLang, useT, type Lang } from '../../i18n'
 
 interface Props {
+  coastRadius: number
+  onCoastRadiusChange: (km: number) => void
   onClose: () => void
 }
 
-export function SettingsSheet({ onClose }: Props) {
+export function SettingsSheet({ coastRadius, onCoastRadiusChange, onClose }: Props) {
   const t = useT()
   const { lang, setLang } = useLang()
 
@@ -39,6 +41,22 @@ export function SettingsSheet({ onClose }: Props) {
               </label>
             ))}
           </div>
+        </section>
+
+        <section>
+          <h3 className="section-title">
+            {t('settings.coastRadius')}: {coastRadius} km
+          </h3>
+          <input
+            type="range"
+            min={0}
+            max={50}
+            step={5}
+            value={coastRadius}
+            onChange={(e) => onCoastRadiusChange(Number(e.target.value))}
+            aria-label={t('settings.coastRadius')}
+          />
+          <p className="help-text">{t('settings.coastRadiusHelp')}</p>
         </section>
 
         <section>

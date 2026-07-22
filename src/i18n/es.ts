@@ -103,8 +103,31 @@ export const es = {
 
   'day.today': 'Hoy',
 
+  'species.title': '¿Qué especie buscas?',
+  'species.any': 'Cualquiera',
+  'species.noCatalog': 'Aún no hay catálogo de especies para esta zona.',
+  'species.bottom': 'Fondo',
+  'species.bottom.sand': 'arenales',
+  'species.bottom.rock': 'roquedos',
+  'species.bottom.mixed': 'mixto (arena y roca)',
+  'species.activity': 'Actividad',
+  'species.activity.nocturnal': 'crepuscular y nocturna',
+  'species.activity.diurnal': 'diurna y crepuscular',
+  'species.bestSeason': 'Mejor época',
+  'species.allYear': 'todo el año',
+
+  'zone.region': 'Zona',
+  'zone.marineDistance': 'datos de mar a ~{km} km',
+  'zone.sst': 'Agua',
+  'region.mediterranean': 'Mediterráneo',
+  'region.atlanticNe': 'Atlántico nororiental',
+  'region.macaronesia': 'Macaronesia (Canarias, Madeira, Azores)',
+
   'settings.title': 'Ajustes',
   'settings.language': 'Idioma',
+  'settings.coastRadius': 'Radio de búsqueda de costa',
+  'settings.coastRadiusHelp':
+    'Si marcas un punto sin datos de mar (por ejemplo, un pueblo tierra adentro), se buscará la costa más cercana hasta esta distancia para tomar los datos marinos.',
   'settings.aboutTitle': 'Sobre los datos',
   'settings.aboutBody':
     'Las horas de pleamar y bajamar se calculan automáticamente a partir del nivel del mar previsto por el modelo de Open-Meteo. Donde ese dato no existe, se estiman por astronomía (tránsito lunar) y se marcan con "~". El coeficiente de marea y las fases lunares se calculan con precisión astronómica, y la meteorología procede de Open-Meteo.',
@@ -133,4 +156,14 @@ export const es = {
   'reason.time.flat': 'Horas centrales del día: menor actividad',
   'reason.storm': 'Riesgo de tormenta: precaución',
   'reason.noMarine': 'Sin datos de mar: valoración parcial',
+
+  'reason.species.seaGood': '{name}: estado del mar a su gusto ({height} m)',
+  'reason.species.seaMid': '{name}: estado del mar aceptable ({height} m)',
+  'reason.species.seaBad': '{name}: el estado del mar no le favorece ({height} m)',
+  'reason.species.sstGood': 'Agua a {sst} °C: rango óptimo para {name}',
+  'reason.species.sstMid': 'Agua a {sst} °C: aceptable para {name}',
+  'reason.species.sstBad': 'Agua a {sst} °C: fuera del rango de {name}',
+  'reason.species.seasonGood': 'Buena época del año para {name}',
+  'reason.species.seasonMid': 'Época media del año para {name}',
+  'reason.species.seasonBad': 'Época floja del año para {name}',
 } as const
