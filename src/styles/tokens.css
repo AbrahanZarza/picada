@@ -1,0 +1,37 @@
+:root {
+  /* Paleta */
+  --bg: #f6f8f9;
+  --surface: #ffffff;
+  --ink: #12262e;
+  --ink-soft: #4a606a;
+  --ink-faint: #8fa3ab;
+  --primary: #0e5e6f;
+  --primary-soft: #e3eef0;
+  --accent: #f2a03d;
+  --accent-soft: #fdf0dd;
+  --border: #e4eaec;
+  --danger: #c6472f;
+
+  /* Escala de score */
+  --score-bad: #c6472f;
+  --score-fair: #d98e32;
+  --score-good: #7fa23b;
+  --score-verygood: #2e8c6a;
+  --score-excellent: #1e7d5e;
+
+  /* Tipografía */
+  --font-body: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  /* Espaciado y forma */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 3px rgba(18, 38, 46, 0.06), 0 4px 16px rgba(18, 38, 46, 0.05);
+  --shadow-lift: 0 4px 12px rgba(18, 38, 46, 0.1), 0 12px 32px rgba(18, 38, 46, 0.08);
+}
