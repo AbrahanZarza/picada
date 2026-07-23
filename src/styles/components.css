@@ -15,7 +15,7 @@
 
 .btn-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -696,6 +696,32 @@
 
 .sheet-head h2 {
   font-size: 1.2rem;
+}
+
+.theme-switch {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.theme-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: background 0.15s, color 0.15s;
+}
+
+.theme-switch-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
 .lang-options {

@@ -136,6 +136,10 @@ export const en: Record<keyof typeof es, string> = {
 
   'settings.title': 'Settings',
   'settings.language': 'Language',
+  'settings.theme': 'Appearance',
+  'theme.system': 'System',
+  'theme.light': 'Light',
+  'theme.dark': 'Dark',
   'settings.coastRadius': 'Coast search radius',
   'settings.coastRadiusHelp':
     'If you mark a spot without sea data (e.g. a town inland), the nearest coast within this distance will be used for marine data.',

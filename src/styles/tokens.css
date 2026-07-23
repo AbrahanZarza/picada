@@ -1,5 +1,5 @@
 :root {
-  /* Paleta */
+  /* Paleta (modo claro) */
   --bg: #f6f8f9;
   --surface: #ffffff;
   --ink: #12262e;
@@ -7,10 +7,15 @@
   --ink-faint: #8fa3ab;
   --primary: #0e5e6f;
   --primary-soft: #e3eef0;
+  --on-primary: #ffffff;
   --accent: #f2a03d;
   --accent-soft: #fdf0dd;
   --border: #e4eaec;
   --danger: #c6472f;
+
+  /* Esqueleto de carga */
+  --skeleton-base: #eef2f4;
+  --skeleton-shine: #e4eaec;
 
   /* Escala de score */
   --score-bad: #c6472f;
@@ -34,4 +39,34 @@
   --radius-sm: 10px;
   --shadow: 0 1px 3px rgba(18, 38, 46, 0.06), 0 4px 16px rgba(18, 38, 46, 0.05);
   --shadow-lift: 0 4px 12px rgba(18, 38, 46, 0.1), 0 12px 32px rgba(18, 38, 46, 0.08);
+}
+
+/* Modo oscuro: se activa cuando data-theme="dark" (lo fija el ThemeProvider
+   según la preferencia del usuario o la del sistema). */
+:root[data-theme='dark'] {
+  --bg: #0e181c;
+  --surface: #16242a;
+  --ink: #e8eef0;
+  --ink-soft: #a7bcc4;
+  --ink-faint: #6f8892;
+  --primary: #4fb3c6;
+  --primary-soft: #1a333b;
+  --on-primary: #06222a;
+  --accent: #f2a03d;
+  --accent-soft: #3a2c17;
+  --border: #26383f;
+  --danger: #e0664e;
+
+  --skeleton-base: #1b2a30;
+  --skeleton-shine: #26383f;
+
+  /* Escala de score: un punto más luminosa para leer sobre superficie oscura */
+  --score-bad: #e0664e;
+  --score-fair: #e8a24a;
+  --score-good: #9cbf52;
+  --score-verygood: #46b389;
+  --score-excellent: #37a578;
+
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 4px 12px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.45);
 }

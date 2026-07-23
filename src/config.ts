@@ -7,6 +7,7 @@ export const STORAGE_KEYS = {
   lang: 'picada.v1.lang',
   species: 'picada.v1.species',
   coastRadius: 'picada.v1.coastRadius',
+  theme: 'picada.v1.theme',
 } as const
 
 export const SCORE_BANDS = [

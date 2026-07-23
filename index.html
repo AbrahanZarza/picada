@@ -7,8 +7,20 @@
     <meta name="theme-color" content="#0E5E6F" />
     <meta name="description" content="Picada — planifica tu jornada de pesca: viento, olas, mareas y luna combinados en una valoración inteligente." />
     <title>Picada — planifica tu pesca</title>
-  </head>
-  <body>
+    <script>
+      // Fija el tema antes del primer pintado para evitar parpadeo (FOUC).
+      try {
+        var stored = JSON.parse(localStorage.getItem('picada.v1.theme'))
+        var isDark =
+          stored === 'dark' ||
+          ((!stored || stored === 'system') &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light'
+      } catch (e) {
+        /* localStorage no disponible: se queda en claro */
+      }
+    </script>
+  </body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

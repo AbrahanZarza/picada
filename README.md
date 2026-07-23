@@ -16,7 +16,7 @@ clave y de cálculo astronómico en el propio navegador.
 - Leaflet + OpenStreetMap (mapa, carga lazy)
 - [suncalc](https://github.com/mourner/suncalc) + fórmulas propias (fase lunar,
   tránsitos, coeficiente de marea 20-120, mareas estimadas, solunar)
-- i18n propio ES/EN · CSS plano con design tokens · vitest
+- i18n propio ES/EN · tema claro/oscuro/sistema · CSS plano con design tokens · vitest
 
 ## Desarrollo
 

@@ -1,4 +1,5 @@
 import { useLang, useT, type Lang } from '../../i18n'
+import { useTheme, type Theme } from '../../theme'
 
 interface Props {
   coastRadius: number
@@ -6,9 +7,16 @@ interface Props {
   onClose: () => void
 }
 
+const THEME_OPTIONS: { value: Theme; icon: string }[] = [
+  { value: 'system', icon: '🖥️' },
+  { value: 'light', icon: '☀️' },
+  { value: 'dark', icon: '🌙' },
+]
+
 export function SettingsSheet({ coastRadius, onCoastRadiusChange, onClose }: Props) {
   const t = useT()
   const { lang, setLang } = useLang()
+  const { theme, setTheme } = useTheme()
 
   return (
     <div className="sheet-backdrop" onClick={onClose}>
@@ -25,6 +33,25 @@ export function SettingsSheet({ coastRadius, onCoastRadiusChange, onClose }: Pro
             ✕
           </button>
         </div>
+
+        <section>
+          <h3 className="section-title">{t('settings.theme')}</h3>
+          <div className="theme-switch" role="radiogroup" aria-label={t('settings.theme')}>
+            {THEME_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={theme === opt.value}
+                className={`theme-switch-btn ${theme === opt.value ? 'active' : ''}`}
+                onClick={() => setTheme(opt.value)}
+              >
+                <span aria-hidden="true">{opt.icon}</span>
+                {t(`theme.${opt.value}`)}
+              </button>
+            ))}
+          </div>
+        </section>
 
         <section>
           <h3 className="section-title">{t('settings.language')}</h3>

@@ -135,6 +135,10 @@ export const es = {
 
   'settings.title': 'Ajustes',
   'settings.language': 'Idioma',
+  'settings.theme': 'Apariencia',
+  'theme.system': 'Sistema',
+  'theme.light': 'Claro',
+  'theme.dark': 'Oscuro',
   'settings.coastRadius': 'Radio de búsqueda de costa',
   'settings.coastRadiusHelp':
     'Si marcas un punto sin datos de mar (por ejemplo, un pueblo tierra adentro), se buscará la costa más cercana hasta esta distancia para tomar los datos marinos.',

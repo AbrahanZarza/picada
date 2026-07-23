@@ -100,7 +100,7 @@ p {
 
 .lang-toggle button.active {
   background: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .icon-btn {
@@ -145,7 +145,7 @@ p {
 .chip.active {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: var(--on-primary);
 }
 
 .chip:disabled {
@@ -155,7 +155,12 @@ p {
 
 .skeleton {
   border-radius: var(--radius);
-  background: linear-gradient(90deg, #eef2f4 25%, #e4eaec 50%, #eef2f4 75%);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
