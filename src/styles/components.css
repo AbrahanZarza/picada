@@ -153,14 +153,50 @@
   white-space: nowrap;
 }
 
-.location-actions {
+/* buscador + botón "usar mi ubicación" en la misma fila */
+.search-row {
   display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
-.location-actions .btn-primary {
+.search-row .place-search {
   flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+  display: flex;
+}
+
+.search-row .search-box {
+  flex: 1;
+}
+
+.btn-locate {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+/* en pantallas estrechas, el botón queda solo con el icono (patrón mapa) */
+@media (max-width: 480px) {
+  .btn-locate-text {
+    display: none;
+  }
+  .btn-locate {
+    padding: 10px 14px;
+  }
+}
+
+/* botón continuar centrado al final */
+.location-continue {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+
+.location-continue .btn-primary {
+  min-width: 240px;
+  max-width: 100%;
 }
 
 .geo-error {

@@ -56,7 +56,26 @@ export function LocationScreen({ initial, onConfirm }: Props) {
       <h1 className="location-title">{t('location.title')}</h1>
       <p className="location-subtitle">{t('location.subtitle')}</p>
 
-      <PlaceSearch onPick={setCandidate} />
+      <div className="search-row">
+        <PlaceSearch onPick={setCandidate} />
+        <button
+          className="btn-secondary btn-locate"
+          onClick={geo.locate}
+          disabled={geo.status === 'locating'}
+          aria-label={t('location.useMyLocation')}
+          title={t('location.useMyLocation')}
+        >
+          <Icon name="locate" size={18} />
+          <span className="btn-locate-text">
+            {geo.status === 'locating' ? t('location.locating') : t('location.useMyLocation')}
+          </span>
+        </button>
+      </div>
+      {geoFailed && (
+        <p className="geo-error">
+          {t(geo.status === 'denied' ? 'location.geoDenied' : 'location.geoError')}
+        </p>
+      )}
 
       <div className="map-wrap">
         <Suspense fallback={<div className="location-map skeleton" />}>
@@ -65,11 +84,7 @@ export function LocationScreen({ initial, onConfirm }: Props) {
         {!candidate && <div className="map-hint">{t('location.mapHint')}</div>}
       </div>
 
-      <div className="location-actions">
-        <button className="btn-secondary" onClick={geo.locate} disabled={geo.status === 'locating'}>
-          <Icon name="locate" size={18} />
-          {geo.status === 'locating' ? t('location.locating') : t('location.useMyLocation')}
-        </button>
+      <div className="location-continue">
         <button className="btn-primary" disabled={!candidate} onClick={() => candidate && onConfirm(candidate)}>
           {t('location.continue')}
           {candidate && (
@@ -79,11 +94,6 @@ export function LocationScreen({ initial, onConfirm }: Props) {
           )}
         </button>
       </div>
-      {geoFailed && (
-        <p className="geo-error">
-          {t(geo.status === 'denied' ? 'location.geoDenied' : 'location.geoError')}
-        </p>
-      )}
     </div>
   )
 }
