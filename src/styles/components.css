@@ -399,7 +399,9 @@
   gap: var(--space-4);
 }
 
-@media (min-width: 768px) {
+/* Split a dos columnas solo cuando hay ancho de sobra (portátiles y tablets en
+   horizontal). Por debajo, todo se apila y las tarjetas fluyen a varias columnas. */
+@media (min-width: 900px) {
   .dashboard-grid {
     grid-template-columns: 5fr 7fr;
     align-items: start;
