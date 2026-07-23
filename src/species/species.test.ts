@@ -10,23 +10,44 @@ describe('regiones', () => {
     expect(regionOf(36.53, -6.29)).toBe('atlanticNe') // Cádiz
     expect(regionOf(43.36, -8.41)).toBe('atlanticNe') // A Coruña
     expect(regionOf(28.1, -15.4)).toBe('macaronesia') // Las Palmas
-    expect(regionOf(-33.9, 151.2)).toBeNull() // Sídney: sin catálogo
+    // Cobertura mundial
+    expect(regionOf(21.16, -86.85)).toBe('caribbean') // Cancún
+    expect(regionOf(25.77, -80.19)).toBe('caribbean') // Miami
+    expect(regionOf(40.71, -73.99)).toBe('atlanticNw') // Nueva York
+    expect(regionOf(37.77, -122.42)).toBe('pacificNe') // San Francisco
+    expect(regionOf(20.65, -105.22)).toBe('pacificEastTropical') // Puerto Vallarta
+    expect(regionOf(-12.05, -77.05)).toBe('pacificSe') // Lima
+    expect(regionOf(-34.6, -58.4)).toBe('atlanticSw') // Buenos Aires
+    expect(regionOf(14.72, -17.47)).toBe('africaAtlantic') // Dakar
+    expect(regionOf(-33.9, 18.4)).toBe('africaAtlantic') // Ciudad del Cabo
+    expect(regionOf(-33.87, 151.21)).toBe('oceaniaTemperate') // Sídney
+    expect(regionOf(35.68, 139.77)).toBe('asiaNe') // Tokio
+    expect(regionOf(25.0, 55.0)).toBe('indoPacific') // Dubái
+    expect(regionOf(47.0, 80.0)).toBeNull() // Kazajistán central (sin cuenca marina asignada)
   })
 
   it('cada región tiene especies', () => {
-    expect(speciesForRegion('mediterranean').length).toBeGreaterThanOrEqual(5)
-    expect(speciesForRegion('atlanticNe').length).toBeGreaterThanOrEqual(5)
-    expect(speciesForRegion('macaronesia').length).toBeGreaterThanOrEqual(3)
+    const regions = [
+      'mediterranean', 'atlanticNe', 'macaronesia', 'caribbean', 'atlanticNw',
+      'pacificEastTropical', 'pacificNe', 'atlanticSw', 'pacificSe',
+      'africaAtlantic', 'indoPacific', 'oceaniaTemperate', 'asiaNe',
+    ] as const
+    for (const r of regions) {
+      expect(speciesForRegion(r).length).toBeGreaterThanOrEqual(5)
+    }
     expect(speciesForRegion(null)).toEqual([])
   })
 
   it('datos del catálogo bien formados', () => {
+    const ids = new Set<string>()
     for (const s of SPECIES) {
       expect(s.months).toHaveLength(12)
       expect(s.sst[0]).toBeLessThan(s.sst[1])
       expect(s.sst[1]).toBeLessThan(s.sst[2])
       expect(s.sst[2]).toBeLessThan(s.sst[3])
       expect(s.regions.length).toBeGreaterThan(0)
+      expect(ids.has(s.id), `id duplicado: ${s.id}`).toBe(false)
+      ids.add(s.id)
     }
   })
 

@@ -49,6 +49,20 @@ para precisión sub-horaria. Donde no hay dato de nivel del mar se estiman por
 astronomía (tránsito lunar) y se marcan con "~". El **coeficiente** de marea es
 puramente astronómico y robusto.
 
+## Especies objetivo
+
+Al elegir el punto, Picada detecta la **región marina** (13 zonas que cubren el mundo:
+Mediterráneo, Atlántico NE/NO, Macaronesia, Caribe y golfo de México, Pacífico oriental
+tropical, Pacífico NE, Atlántico SO, Pacífico SE, África atlántica y austral, Indo-Pacífico
+tropical, Australia meridional/Nueva Zelanda y Asia NE) y ofrece las especies típicas de
+pesca **desde costa** de esa zona. Al elegir una, el score se reajusta según sus preferencias
+de oleaje, temperatura del agua, estacionalidad (por mes) y actividad diurna/nocturna.
+
+Cada especie muestra una miniatura vectorial propia. Las ilustraciones están generadas con
+[Magnific](https://magnific.ai) (modelo de texto-a-SVG) y rasterizadas a WebP de 112 px con
+fondo transparente en `public/species/`. Especies con el mismo aspecto en distintas regiones
+comparten ilustración vía el campo `image` del catálogo.
+
 ## Ubicaciones de prueba
 
 | Caso | Coordenadas | Qué valida |
@@ -58,3 +72,6 @@ puramente astronómico y robusto.
 | Interior | Madrid `40.417, -3.703` | degradación sin mar, surfcasting deshabilitado |
 | Lago | Iznájar `37.258, -4.308` | igual que interior, búsqueda por nombre |
 | Alta latitud | Bergen `60.39, 5.32` | sol/luna extremos |
+| Caribe | Cancún `21.16, -86.85` | especies tropicales (róbalo, sábalo, tarpón) |
+| Pacífico tropical | Puerto Vallarta `20.65, -105.22` | pez gallo, sierra, pargos |
+| Hemisferio sur | Sídney `-33.87, 151.21` | estacionalidad invertida, especies de Oceanía |

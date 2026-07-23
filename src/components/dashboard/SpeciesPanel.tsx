@@ -1,6 +1,7 @@
 import { bestMonthsRange, type Region, type Species } from '../../species/catalog'
 import { formatNumber } from '../../lib/format'
 import { useLang, useT, type TranslationKey } from '../../i18n'
+import { SpeciesSelect } from './SpeciesSelect'
 
 interface Props {
   region: Region | null
@@ -42,28 +43,21 @@ export function SpeciesPanel({
         region == null && <p className="mode-desc">{t('species.noCatalog')}</p>
       ) : (
         <>
-          <label className="species-select-wrap">
+          <div className="species-select-wrap">
             <span className="species-label">{t('species.title')}</span>
-            <select
-              className="species-select"
-              value={selected?.id ?? ''}
-              onChange={(e) => onSelect(e.target.value || null)}
-            >
-              <option value="">{t('species.any')}</option>
-              {[...speciesList]
-                .sort((a, b) =>
-                  (lang === 'es' ? a.nameEs : a.nameEn).localeCompare(
-                    lang === 'es' ? b.nameEs : b.nameEn,
-                    locale,
-                  ),
-                )
-                .map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {lang === 'es' ? s.nameEs : s.nameEn}
-                  </option>
-                ))}
-            </select>
-          </label>
+            <SpeciesSelect
+              speciesList={[...speciesList].sort((a, b) =>
+                (lang === 'es' ? a.nameEs : a.nameEn).localeCompare(
+                  lang === 'es' ? b.nameEs : b.nameEn,
+                  locale,
+                ),
+              )}
+              selected={selected}
+              onSelect={onSelect}
+              anyLabel={t('species.any')}
+              nameOf={(s) => (lang === 'es' ? s.nameEs : s.nameEn)}
+            />
+          </div>
           {selected && (
             <p className="mode-desc species-tips">
               <em>{selected.scientific}</em>
