@@ -1,0 +1,38 @@
+name: Build de producción
+
+on:
+  # Construye en cada push a main
+  push:
+    branches: [main]
+  # ...y permite lanzarlo a mano desde la pestaña Actions
+  workflow_dispatch:
+
+# Solo lectura del repositorio: no despliega nada
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build de producción
+        run: npm run build
+
+      - name: Subir los estáticos (dist/)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
