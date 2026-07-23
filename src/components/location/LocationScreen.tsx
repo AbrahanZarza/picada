@@ -45,7 +45,7 @@ export function LocationScreen({ initial, onConfirm }: Props) {
     <div className="app-shell location-screen">
       <header className="app-header">
         <div className="brand">
-          <img src="/favicon.svg" alt="" width={28} height={28} />
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" width={28} height={28} />
           {t('app.name')}
         </div>
         <div className="header-actions">
