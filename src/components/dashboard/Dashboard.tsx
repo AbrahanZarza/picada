@@ -86,6 +86,9 @@ export function Dashboard({ point, onChangeLocation }: Props) {
     return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null
   }, [day])
 
+  // resumen del día para las tarjetas: se calcula una vez y se comparte
+  const summary = useMemo(() => (day ? daySummary(day) : null), [day])
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -110,7 +113,7 @@ export function Dashboard({ point, onChangeLocation }: Props) {
       {data.status === 'loading' && <LoadingSkeleton />}
       {data.status === 'error' && <ErrorState onRetry={data.retry} />}
 
-      {data.status === 'ready' && day && dayScore && (
+      {data.status === 'ready' && day && dayScore && summary && (
         <>
           <DaySelector
             days={data.days}
@@ -157,12 +160,12 @@ export function Dashboard({ point, onChangeLocation }: Props) {
             <div className="detail-panel">
               <HourlyChart day={day} mode={mode} scoreOverride={dayScore} timezone={timezone} />
               <div className="cards-grid">
-                <WeatherCard summary={daySummary(day)} />
-                <WindCard summary={daySummary(day)} />
-                {data.marine === 'available' && <WavesCard summary={daySummary(day)} />}
+                <WeatherCard summary={summary} />
+                <WindCard summary={summary} />
+                {data.marine === 'available' && <WavesCard summary={summary} />}
                 <TideCard astro={day.astro} timezone={timezone} />
                 <MoonSunCard astro={day.astro} timezone={timezone} />
-                <PressureCard summary={daySummary(day)} />
+                <PressureCard summary={summary} />
               </div>
             </div>
           </div>

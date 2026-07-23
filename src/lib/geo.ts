@@ -1,5 +1,28 @@
+import type { GeoPoint } from '../types'
+
 export const CARDINALS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const
 export type Cardinal = (typeof CARDINALS)[number]
+
+/**
+ * Valida un punto geográfico llegado de una fuente no fiable (localStorage
+ * manipulado, URL, etc.): coordenadas finitas y dentro de rango. Evita que
+ * un valor corrupto llegue a las llamadas de red o al mapa.
+ */
+export function isValidGeoPoint(value: unknown): value is GeoPoint {
+  if (typeof value !== 'object' || value === null) return false
+  const p = value as Record<string, unknown>
+  return (
+    typeof p.lat === 'number' &&
+    Number.isFinite(p.lat) &&
+    p.lat >= -90 &&
+    p.lat <= 90 &&
+    typeof p.lon === 'number' &&
+    Number.isFinite(p.lon) &&
+    p.lon >= -180 &&
+    p.lon <= 180 &&
+    (p.label === undefined || typeof p.label === 'string')
+  )
+}
 
 export function degreesToCardinal(deg: number): Cardinal {
   const idx = Math.round(((deg % 360) + 360) % 360 / 45) % 8

@@ -9,7 +9,19 @@ export class ApiError extends Error {
 }
 
 const CACHE_TTL_MS = 10 * 60 * 1000
+/** Tope de entradas: sondear costa desde un punto interior genera decenas de
+ *  URLs; sin límite, una sesión larga moviéndose por el mapa crecería sin parar. */
+const CACHE_MAX_ENTRIES = 100
 const cache = new Map<string, { at: number; promise: Promise<unknown> }>()
+
+/** Evicción FIFO: el Map conserva el orden de inserción, borramos las más antiguas. */
+function evictOldest(): void {
+  while (cache.size > CACHE_MAX_ENTRIES) {
+    const oldest = cache.keys().next().value
+    if (oldest === undefined) break
+    cache.delete(oldest)
+  }
+}
 
 async function doFetch<T>(url: string, timeoutMs: number): Promise<T> {
   const controller = new AbortController()
@@ -43,6 +55,7 @@ export async function fetchJson<T>(url: string, { timeoutMs = 8000 } = {}): Prom
     }
   })()
   cache.set(url, { at: Date.now(), promise })
+  evictOldest()
   promise.catch(() => cache.delete(url))
   return promise
 }
